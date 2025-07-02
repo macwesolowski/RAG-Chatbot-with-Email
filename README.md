@@ -1,4 +1,4 @@
-# RAG-Chatbot-with-Email
+# RAG Chatbot with Email
 
 🤖 Przedstawiam Agenta AI wspierającego analizy finansowe i decyzje biznesowo-inwestycyjne on-line.
 To zaawansowane połączenie RAG (Retrieval-Augmented Generation) z chatbotem oraz możliwością automatycznego wysyłania maili z poziomu rozmowy 💬📧
