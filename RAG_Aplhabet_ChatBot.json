@@ -1,0 +1,293 @@
+{
+  "name": "RAG Aplhabet ChatBot",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b62c76b3-37d0-4ae1-8b38-de67f6357cca",
+      "name": "When chat message received",
+      "webhookId": "f1df26cb-d005-4f71-9c26-5f9a32ee8b82"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an AI assistant specialized in analyzing Alphabet's quarterly financial reports. Your primary task is to answer questions accurately and precisely using the vector database, which contains relevant documents (Q4 2024 and Q1 2025 reports).\n\nOnly provide information that you retrieve from the documents (or verifiedd expert knowledge). If something is not included in the dataset or is unclear, clearly state that you do not have sufficient infromation.\n\nStructure of your responses:\n- Concise and to the point\n- Specific numbers and facts, when available\n- Clearly indicate which quarterly report (Q4 2024 or Q1 2025) the information comes from\n\nObjective:\nProvide users with reliable and quick insights into Alphabet's quarterly financials without unnecessary details.a helpful assistant"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "ae66ee0c-bb05-4a21-bfad-4c52ff16c47b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        220
+      ],
+      "id": "2ea5c5f9-4e75-4eb3-a62f-110f7895fed8",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "1E6MS59ayTeQCbi5",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        220
+      ],
+      "id": "d9ed89cd-f437-4958-9c87-7695126140bb",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "description": "Returns documents related to Alphabet's Q4 2024 and Q1 2025, the financials, outlook, profit margins and everything important from the earnings report.",
+        "topK": 5
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        380,
+        220
+      ],
+      "id": "f8525264-39eb-4233-a156-aec4e443e3f2",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8ncoursegoogleearnings",
+          "mode": "list",
+          "cachedResultName": "n8ncoursegoogleearnings"
+        },
+        "options": {
+          "pineconeNamespace": "googlen8n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        200,
+        440
+      ],
+      "id": "87e19d3e-ef9a-4113-81df-30e8b72e634e",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "MyBQfiG9a0vh8sps",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        440
+      ],
+      "id": "5e2e6e52-edce-42a8-92ef-ad94f402eaa4",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "1E6MS59ayTeQCbi5",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 1024
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        660
+      ],
+      "id": "e84d9955-82a1-41e8-bfc3-b7dc27d48b6c",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "1E6MS59ayTeQCbi5",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `Sign off message with name: Maciej`, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        700,
+        60
+      ],
+      "id": "dbf56ffa-fcff-4602-86a3-e4049e5e27df",
+      "name": "Gmail",
+      "webhookId": "bb8efb1b-234c-4cb8-9466-fe2a54902355",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "yI11Wi3l7fZMZKHw",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "86f004ea-a7ec-459f-b536-2c78450fafa1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c9bdd46e33bfe0a6fc0826273c04629c194078d71f7b4f375a5403ad7ea448a0"
+  },
+  "id": "Sqti5hl0QGJn0kYk",
+  "tags": []
+}
